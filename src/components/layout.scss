@@ -597,3 +597,21 @@ html {
     }
   }
   
+  button {
+    background-color: blueviolet;
+    color: white;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    padding: 5px 10px;
+  }
+  button:focus, :active{
+    outline: 0;
+  }
+
+  input{
+    font-size: 16px;
+    border-radius: 10px;
+    border: none;
+    padding: 0 10px;
+  }

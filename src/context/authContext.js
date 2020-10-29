@@ -48,6 +48,7 @@ export const GlobalContextProvider = ({children}) => {
             validationLoading,
             isAuthenticated,
             setIsAuthenticated,
+            data,
         }
         }>
         {children}

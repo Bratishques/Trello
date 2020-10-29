@@ -1,14 +1,11 @@
 import React from "react"
+import BoardsWrapper from "../components/boards/boardsWrapper"
 
 export const MainPage = () => {
-    
-    return (
+  return (
     <div>
-    <h1>
-        
-    </h1>
-    Hello, this is private page
-
+      <h1>Boards</h1>
+      <BoardsWrapper/>
     </div>
-    )
+  )
 }
