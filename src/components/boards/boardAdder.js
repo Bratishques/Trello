@@ -1,12 +1,29 @@
-import React, { useState } from "react"
+import { useMutation } from "@apollo/client"
+import { gql } from "apollo-boost"
+import React, { useContext, useState } from "react"
+import { AuthContext } from "../../context/authContext"
 
 const BoardAdder = ({additionHandler}) => {
+  const auth = useContext(AuthContext)
+  const ADD_BOARD = gql`
+    mutation createBoard($name: String!, $userId: ID!) {
+      createBoard(name: $name, userId: $userId) {
+        _id
+      }
+    }
+  `
+    const [createBoard, {data: boardData, error}] = useMutation(ADD_BOARD, {
+      onCompleted: (data) => {
+        auth.pullTrigger()
+      }
+    })
 
     const [boardName, setBoardName] = useState('')
 
-    const createBoard = async () => {
+    const clickHandler = async () => {
         if (boardName.length > 0) {
-            console.log(boardName)
+          console.log(boardName, auth.data.userId)
+            createBoard({variables:{name: boardName, userId: auth.data.userId}})
         }
     }
   
@@ -18,7 +35,7 @@ const BoardAdder = ({additionHandler}) => {
     <div className="boards board-wrap">
       <input className="boards board-input" placeholder="Insert Name" onChange={inputHandler} />
       <div className="boards board-input-buttons-wrap">
-        <button className="boards board-input-button" onClick={createBoard}>Save</button>
+        <button className="boards board-input-button" onClick={clickHandler}>Save</button>
         <button
           className="boards board-input-button cancel"
           onClick={additionHandler}

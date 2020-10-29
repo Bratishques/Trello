@@ -6,7 +6,7 @@ import "./boards.scss"
 const BoardsWrapper = () => {
     const [boards, setBoards] = useState([])
     const auth = useContext(AuthContext)
-
+    
     return (
         <div className = "boards boards-wrapper">
         <Board/>

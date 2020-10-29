@@ -28,6 +28,10 @@ div.board-wrap{
     width: 200px
 }
 
+.board-input:focus {
+    border-bottom: 1px solid blueviolet;
+}
+
 .board-wrap:hover{
     transform: scale(1.05);
     -webkit-box-shadow: 0px 2px 13px 0px rgba(102,51,153,0.15); 

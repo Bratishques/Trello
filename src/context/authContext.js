@@ -8,12 +8,13 @@ export const isBrowser = () => typeof window !== "undefined"
 export const storageName = "userData"
 
 export const GlobalContextProvider = ({children}) => {
-    const data = (() => {
+    const localData = (() => {
         if (isBrowser() && window.localStorage.getItem(storageName)) {
           return JSON.parse(window.localStorage.getItem(storageName))
         } else return false
       })()
-    const [isAuthenticated, setIsAuthenticated] = useState(!!data)
+    const [isAuthenticated, setIsAuthenticated] = useState(!!localData)
+    const [trigger, setTrigger] = useState(0)
 
     const VERIFY = gql`
     mutation verifyToken($token: String!, $userId: ID!) {
@@ -22,35 +23,37 @@ export const GlobalContextProvider = ({children}) => {
         }
     }
     `
-    const [verifyToken, {data: validationData, loading: validationLoading}] = useMutation(VERIFY)
-
+    function pullTrigger(){
+        setTrigger(trigger + 1)
+    }
+    const [verifyToken, {data, loading: validationLoading}] = useMutation(VERIFY, {
+        onCompleted: (data) => {
+            if (!data.verifyToken.valid) {
+                setIsAuthenticated(false)
+                localStorage.removeItem(storageName)
+            }
+            console.log(isAuthenticated)
+        }
+    })
+    
     useEffect(() => {
+        console.log("Verifying")
         const verifyUser = async () => {
-            if (data) {
-                verifyToken({variables: {token: data.token, userId: data.userId}})
+            if (localData) {
+               verifyToken({variables: {token: localData.token, userId: localData.userId}})
             }
         }
         verifyUser()
-    }, [])
-
-    useEffect(() => {
-      if (validationData) {
-        if (!validationData.verifyToken.valid) {
-            setIsAuthenticated(false)
-            localStorage.removeItem(storageName)
-        }
-      }
-      console.log(validationLoading, isAuthenticated)
-    }, [validationData])
+    }, [trigger])
 
     return (
         <AuthContext.Provider value={{
             validationLoading,
             isAuthenticated,
             setIsAuthenticated,
-            data,
-        }
-        }>
+            data: localData,
+            pullTrigger
+        }}>
         {children}
         </AuthContext.Provider>
     )
