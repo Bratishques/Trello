@@ -1,6 +1,7 @@
 import { Link } from "gatsby"
 import PropTypes from "prop-types"
 import React from "react"
+import LogoutButton from "./logoutButton"
 
 const Header = () => (
   <header
@@ -12,11 +13,13 @@ const Header = () => (
     <div
       style={{
         margin: `0 auto`,
-        maxWidth: 960,
-        padding: `1.45rem 1.0875rem`,
+        maxWidth: 1200,
+        padding: `1rem 1.0875rem`,
+        display: `grid`,
+        gridTemplateColumns: "200px 1fr"
       }}
     >
-      <h1 style={{ margin: 0 }}>
+      <h1 style={{ margin: 0, fontSize: "25px"}}>
         <Link
           to="/"
           style={{
@@ -24,9 +27,10 @@ const Header = () => (
             textDecoration: `none`,
           }}
         >
-          Header
+          BootlegTrello
         </Link>
       </h1>
+      <LogoutButton/>
     </div>
   </header>
 )

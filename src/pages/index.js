@@ -1,12 +1,23 @@
-import React from "react"
-
-import Layout from "../components/layout"
+import React, { useContext, useEffect } from "react"
 import LoginWindow from "../components/loginWindow/loginWindow"
 import SEO from "../components/seo"
 import "../components/layout.scss"
+import { AuthContext } from "../context/authContext"
+import { navigate } from "gatsby"
 
-const IndexPage = () => (
-    <LoginWindow/>
-)
+const IndexPage = () => {
+
+    const auth = useContext(AuthContext)
+
+    useEffect(() => {
+        if (auth.isAuthenticated) {
+            console.log(auth)
+            navigate("/app/main")
+        }
+    },[auth.isAuthenticated])
+
+    return <LoginWindow/>
+    
+}
 
 export default IndexPage
