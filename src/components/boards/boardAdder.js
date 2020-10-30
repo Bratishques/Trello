@@ -12,10 +12,8 @@ const BoardAdder = ({additionHandler}) => {
       }
     }
   `
-    const [createBoard, {data: boardData, error}] = useMutation(ADD_BOARD, {
-      onCompleted: (data) => {
-        auth.pullTrigger()
-      }
+
+    const [createBoard] = useMutation(ADD_BOARD, {
     })
 
     const [boardName, setBoardName] = useState('')
