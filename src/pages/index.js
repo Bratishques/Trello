@@ -11,7 +11,6 @@ const IndexPage = () => {
 
     useEffect(() => {
         if (auth.isAuthenticated) {
-            console.log(auth)
             navigate("/app/main")
         }
     },[auth.isAuthenticated])

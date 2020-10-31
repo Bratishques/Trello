@@ -21,7 +21,7 @@ const Header = () => (
     >
       <h1 style={{ margin: 0, fontSize: "25px"}}>
         <Link
-          to="/"
+          to="/app/main"
           style={{
             color: `white`,
             textDecoration: `none`,

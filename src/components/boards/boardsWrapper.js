@@ -8,13 +8,13 @@ import "./boards.scss"
 import BoardTemplate from "./BoardTemplate"
 
 const BoardsWrapper = () => {
-  const [boards, setBoards] = useState([])
   const auth = useContext(AuthContext)
 
   const FETCH_BOARDS = gql`
     query userBoards($userId: ID!) {
       userBoards(userId: $userId) {
         name
+        _id
       }
     }
   `
@@ -23,27 +23,38 @@ const BoardsWrapper = () => {
     subscription onBoardAdded($userId: ID!) {
       boardAdded(userId: $userId) {
         name
+        _id
       }
     }
   `
 
-  const { data } = useSubscription(LISTEN_FOR_BOARDS, {
-    variables: { userId: auth.data.userId }, 
-    onSubscriptionData: (data) =>{
-        if (data.subscriptionData.data.boardAdded) {
-            const candidate = data.subscriptionData.data.boardAdded
-            setBoards([...boards, candidate])
-        }
-    }
-  })
-
-
-  const { loading } = useQuery(FETCH_BOARDS, {
+ /* useSubscription(LISTEN_FOR_BOARDS, {
     variables: { userId: auth.data.userId },
-    onCompleted: data => {
-      setBoards([...data.userBoards])
+    onSubscriptionData: data => {
+      if (data.subscriptionData.data.boardAdded) {
+        const candidate = data.subscriptionData.data.boardAdded
+        console.log(data.subscriptionData.data)
+      }
     },
+  }) */
+
+  const { data, loading, subscribeToMore } = useQuery(FETCH_BOARDS, {
+    variables: { userId: auth.data.userId },
   })
+
+  useEffect(() => {
+    subscribeToMore({
+      document: LISTEN_FOR_BOARDS,
+      variables: { userId: auth.data.userId },
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+        const newFeedItem = subscriptionData.data.boardAdded
+        return Object.assign({}, {
+          userBoards : [...prev.userBoards.concat(newFeedItem)]
+        })
+      },
+    })
+  },[])
 
   if (loading) {
     return <Loader />
@@ -51,8 +62,8 @@ const BoardsWrapper = () => {
 
   return (
     <div className="boards boards-wrapper">
-      {boards.map((a, i) => {
-        return <BoardTemplate key={i} name={a.name} />
+      {data.userBoards.map((a, i) => {
+        return <BoardTemplate key={i} name={a.name} id={a._id} />
       })}
 
       <Board />

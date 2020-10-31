@@ -19,10 +19,14 @@ const BoardAdder = ({additionHandler}) => {
     const [boardName, setBoardName] = useState('')
 
     const clickHandler = async () => {
+
         if (boardName.length > 0) {
           console.log(boardName, auth.data.userId)
             createBoard({variables:{name: boardName, userId: auth.data.userId}})
+            additionHandler()
         }
+
+
     }
   
     const inputHandler = (e) => {
