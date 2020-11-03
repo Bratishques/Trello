@@ -5,6 +5,7 @@ import { MainPage } from "../privatePages/main"
 import PrivateRoute from "../routing/privateRoute"
 import ThreadsPage from "../privatePages/threadsPage"
 const App = () => (
+  
   <Layout>
     <Router>
       <PrivateRoute path="/app/main" component={MainPage}/>

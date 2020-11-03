@@ -5,6 +5,7 @@ import "../components/layout.scss"
 import { AuthContext } from "../context/authContext"
 import { navigate } from "gatsby"
 
+
 const IndexPage = () => {
 
     const auth = useContext(AuthContext)

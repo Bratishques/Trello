@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useSubscription } from "@apollo/client"
+import { useQuery } from "@apollo/client"
 import { gql } from "apollo-boost"
-import React, { useContext, useEffect, useState } from "react"
+import React, { useContext, useEffect } from "react"
 import { AuthContext } from "../../context/authContext"
 import Loader from "../loader"
 import Board from "./board"
@@ -28,16 +28,6 @@ const BoardsWrapper = () => {
     }
   `
 
- /* useSubscription(LISTEN_FOR_BOARDS, {
-    variables: { userId: auth.data.userId },
-    onSubscriptionData: data => {
-      if (data.subscriptionData.data.boardAdded) {
-        const candidate = data.subscriptionData.data.boardAdded
-        console.log(data.subscriptionData.data)
-      }
-    },
-  }) */
-
   const { data, loading, subscribeToMore } = useQuery(FETCH_BOARDS, {
     variables: { userId: auth.data.userId },
   })
@@ -49,12 +39,15 @@ const BoardsWrapper = () => {
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
         const newFeedItem = subscriptionData.data.boardAdded
-        return Object.assign({}, {
-          userBoards : [...prev.userBoards.concat(newFeedItem)]
-        })
+        return Object.assign(
+          {},
+          {
+            userBoards: [...prev.userBoards.concat(newFeedItem)],
+          }
+        )
       },
     })
-  },[])
+  }, [])
 
   if (loading) {
     return <Loader />
@@ -62,9 +55,10 @@ const BoardsWrapper = () => {
 
   return (
     <div className="boards boards-wrapper">
-      {data.userBoards.map((a, i) => {
-        return <BoardTemplate key={i} name={a.name} id={a._id} />
-      })}
+      {!loading &&
+        data.userBoards.map((a, i) => {
+          return <BoardTemplate key={i} name={a.name} id={a._id} />
+        })}
 
       <Board />
     </div>
