@@ -1,8 +1,16 @@
-import React from "react"
+import React, { useContext } from "react"
+import { ModalContext } from "../../context/modalContext"
 
-const PostTemplate = ({name}) => {
+const PostTemplate = ({name, id}) => {
+
+    const {setIsOpen, setPostId} = useContext(ModalContext)
+    const clickHandler = () => {
+        setIsOpen(true)
+        setPostId(id)
+    }
+    
     return (
-        <div className="post post-wrapper">
+        <div className="post post-wrapper" onClick={clickHandler}>
             {name}
         </div>
     )

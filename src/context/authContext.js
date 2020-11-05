@@ -8,6 +8,9 @@ export const isBrowser = () => typeof window !== "undefined"
 export const storageName = "userData"
 
 export const GlobalContextProvider = ({children}) => {
+
+
+
     const localData = (() => {
         if (isBrowser() && window.localStorage.getItem(storageName)) {
           return JSON.parse(window.localStorage.getItem(storageName))
@@ -52,7 +55,7 @@ export const GlobalContextProvider = ({children}) => {
             isAuthenticated,
             setIsAuthenticated,
             data: localData,
-            pullTrigger
+            pullTrigger,
         }}>
         {children}
         </AuthContext.Provider>

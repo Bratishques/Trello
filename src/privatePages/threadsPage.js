@@ -10,10 +10,11 @@ const ThreadsPage = ({ id }) => {
   const auth = useContext(AuthContext)
 
   const SUBSCRIBE_TO_POST = gql`
-    subscription onPostAdded($ThreadIds: [ID!]) {
-      postAdded(threadIds: $ThreadIds) {
+    subscription onPostAdded($threadIds: [ID!]) {
+      postAdded(threadIds: $threadIds) {
         name
         _id
+        threadId
       }
     }
   `
@@ -25,6 +26,7 @@ const ThreadsPage = ({ id }) => {
         name
         posts {
           name
+          _id
         }
       }
     }
@@ -39,6 +41,7 @@ const ThreadsPage = ({ id }) => {
           posts {
             name
             _id
+            threadId
           }
         }
       }
@@ -52,36 +55,32 @@ const ThreadsPage = ({ id }) => {
   })
 
   useEffect(() => {
+    console.log("mounted")
 
-    subscribeToMore({
+    let unsubscribe = subscribeToMore({
       document: SUBCRIBE_TO_THREADS,
       variables: { boardId: id },
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
         const newFeedItem = subscriptionData.data.threadAdded
+        console.log(newFeedItem)
         return Object.assign(
           {},
           {
             ...prev,
-            board: {threads: [...prev.board.threads, newFeedItem],}
+            board: {
+              ...prev.board,
+              threads: [...prev.board.threads, newFeedItem]
+            }
           }
         )
       },
     })
+    //!important
+    return () => unsubscribe()
 
-    //All thread IDs
- if (!loading) {
-    subscribeToMore({
-      document: SUBSCRIBE_TO_POST,
-      variables: {threadIds: data.board.threads.map((a) => {
-        return a._id
-      })},
-      updateQuery: (prev, {subscriptionData}) => {
-        if (!subscriptionData.data) return prev
-      }
-    })
-  }
-  }, [SUBCRIBE_TO_THREADS, id, subscribeToMore, loading])
+  
+  }, [SUBCRIBE_TO_THREADS, id, subscribeToMore])
 
   if (error) return <div>AN ERROR OCCURED</div>
 
@@ -90,7 +89,7 @@ const ThreadsPage = ({ id }) => {
     <div>
       <h1>Threads at {loading ? `..Loading` : data.board.name}</h1>
       { !loading &&
-        <ThreadsWrapper threads = {data.board.threads} boardId={id}/>
+        <ThreadsWrapper threads = {data.board.threads} boardId={id} subscribeToMore = {subscribeToMore} SUBSCRIBE_TO_POST= {SUBSCRIBE_TO_POST}/>
       }
     </div>
   )

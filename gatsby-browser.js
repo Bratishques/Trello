@@ -1,3 +1,4 @@
+import { ModalContextProvider } from "./src/context/modalContext";
 
 const { ApolloProvider } = require("@apollo/client");
 const React = require("react")
@@ -9,7 +10,9 @@ export const wrapRootElement = ({element}) => (
 
     <ApolloProvider client={client}>
     <GlobalContextProvider>
+    <ModalContextProvider>
     {element}
+    </ModalContextProvider>
     </GlobalContextProvider>
     </ApolloProvider>
 )
