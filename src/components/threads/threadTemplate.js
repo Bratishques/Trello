@@ -6,6 +6,13 @@ import PostTemplate from "../post/postTemplate"
 
 const ThreadTemplate = ({ name, id }) => {
 
+  const POST_DELETED = gql`
+  subscription postDeleted($threadId: ID!){
+      postDeleted(threadId: $threadId) {
+        _id
+      }
+  }
+`
   const SUBSCRIBE_TO_POST = gql`
     subscription onPostAdded($threadId: ID!) {
       postAdded(threadId: $threadId) {
@@ -38,6 +45,28 @@ const ThreadTemplate = ({ name, id }) => {
 
   useEffect(() => {
     let unsubscribe = subscribeToMore({
+      document: POST_DELETED,
+      variables: { threadId: id },
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+        const postId = subscriptionData.data.postDeleted._id
+        const newPosts = prev.thread.posts.filter(a => a._id !== postId)
+        return Object.assign({}, prev, {
+          ...prev,
+          thread: {
+            ...prev.thread,
+            posts: [...newPosts]
+          }
+        })
+        
+      },
+    })
+
+    return () => unsubscribe()
+  }, [])
+
+  useEffect(() => {
+    let unsubscribe = subscribeToMore({
       document: SUBSCRIBE_TO_POST,
       variables: { threadId: id },
       updateQuery: (prev, { subscriptionData }) => {
@@ -57,6 +86,8 @@ const ThreadTemplate = ({ name, id }) => {
 
     return () => unsubscribe()
   }, [])
+
+
   return (
     <div className="threads thread-wrapper">
       <div className="thread thread-scroll-wrap">

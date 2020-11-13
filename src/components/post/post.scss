@@ -41,6 +41,8 @@
 .post-wrapper {
     background-color: white;
     padding: 10px 20px;
+    display: grid;
+    grid-template-columns: 1fr 35px;
 }
 
 .post-modal-overlay {

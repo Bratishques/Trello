@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client"
+import { gql, useMutation, useQuery } from "@apollo/client"
 import React, { useContext, useEffect } from "react"
 import { ModalContext } from "../../context/modalContext"
 
@@ -8,6 +8,18 @@ const PostTemplate = ({ name, id, threadId}) => {
     setIsOpen(true)
     setPostId(id)
   }
+
+  const DELETE_POST = gql`
+    mutation deletePost($postId: ID!, $threadId: ID!){
+      deletePost(postId: $postId, threadId: $threadId){
+      _id
+    }
+  }
+  `
+
+  const [deletePost] = useMutation(DELETE_POST)
+
+ 
   const POST_IS_UPDATED = gql`
     subscription postUpdated($postId: ID!) {
       postUpdated(postId: $postId) {
@@ -28,6 +40,12 @@ const PostTemplate = ({ name, id, threadId}) => {
       }
     }
   `
+
+  const deletePostHandler = async () => {
+    deletePost({
+      variables: {postId: id, threadId: threadId}
+    })
+  }
 
   const { data, subscribeToMore } = useQuery(FETCH_POST_DATA, {
       variables: {postId: id}
@@ -55,8 +73,11 @@ const PostTemplate = ({ name, id, threadId}) => {
   }, [])
 
   return (
-    <div className="post post-wrapper" onClick={clickHandler}>
+    <div className="post post-wrapper" >
+    <div onClick={clickHandler}>
       {data && data.post.name}
+      </div>
+      <button onClick={deletePostHandler}>X</button>
     </div>
   )
 }
