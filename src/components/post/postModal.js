@@ -1,16 +1,20 @@
-import { useQuery } from "@apollo/client"
+import { useMutation, useQuery } from "@apollo/client"
 import { gql } from "apollo-boost"
 import React, { useContext, useEffect, useState } from "react"
 import { ModalContext } from "../../context/modalContext"
 import PostDescription from "./postDescription"
+import PostTitle from "./postTitle"
 
 const PostModal = () => {
+
   const modalContext = useContext(ModalContext)
   const { isOpen, postId, setIsOpen } = modalContext
 
   const closeHandler = () => {
     setIsOpen(false)
   }
+
+ 
 
   const POST_IS_UPDATED = gql`
    subscription postUpdated($postId: ID!) {
@@ -33,9 +37,12 @@ const PostModal = () => {
       }
     }
   `
+  
   const { data, refetch, loading, subscribeToMore} = useQuery(FETCH_POST_DATA, {
     variables: { postId: postId },
   })
+
+
 
   useEffect(() => {
     if (isOpen) {
@@ -59,7 +66,16 @@ const PostModal = () => {
               }
 
             })
+       }
+       if (post.updateType === "nameUpdated") {
+          console.log(post)
+          return Object.assign({}, prev, {
+            post: {
+              ...prev.post,
+              name: post.name
+            }
 
+          })
        }
        
       
@@ -73,31 +89,16 @@ const PostModal = () => {
     <div className={`post post-modal-overlay ${isOpen && `active`}`}>
       <div className="post post-modal-container">
         <div className="post post-modal-wrap">
-          <h2
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            {!data ? `Loading...` : data.post.name}
-            <button
-              onClick={closeHandler}
-              style={{
-                fontSize: "20px",
-                fontWeight: "200",
-              }}
-            >
-              Close
-            </button>
-          </h2>
+          <div>
+            {!data ? `Loading...` : <PostTitle name={data.post.name} postId={postId} closeHandler={closeHandler}/>}
+          </div>
           {!data ? "...Loading" :
           <div>
             <h4 style={{
                 fontSize: "20px",
                 marginBottom: "20px"
             }}>Description</h4>
-            <PostDescription description={data.post.description} postId = {postId}/>
+            <PostDescription description={data.post.description} postId = {postId} isOpen={isOpen}/>
           </div>
         }
         </div>

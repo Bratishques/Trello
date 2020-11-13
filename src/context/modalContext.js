@@ -11,7 +11,7 @@ export const ModalContextProvider = ({children}) => {
             isOpen,
             setIsOpen,
             postId,
-            setPostId
+            setPostId,
         }}>
         {children}
         </ModalContext.Provider>

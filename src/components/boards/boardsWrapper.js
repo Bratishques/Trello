@@ -39,6 +39,7 @@ const BoardsWrapper = () => {
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
         const newFeedItem = subscriptionData.data.boardAdded
+        console.log(newFeedItem)
         return Object.assign(
           {},
           {

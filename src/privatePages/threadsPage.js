@@ -39,12 +39,6 @@ const ThreadsPage = ({ id }) => {
         threads {
           _id
           name
-          posts {
-            name
-            _id
-            threadId
-            description
-          }
         }
       }
     }
