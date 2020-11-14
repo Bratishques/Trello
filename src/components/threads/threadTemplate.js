@@ -3,9 +3,9 @@ import { gql } from "apollo-boost"
 import React, { useEffect } from "react"
 import PostAdder from "../post/postAdder"
 import PostTemplate from "../post/postTemplate"
+import ThreadBottom from "./threadBottom"
 
-const ThreadTemplate = ({ name, id }) => {
-
+const ThreadTemplate = ({ name, id, boardId, nextIds, threads}) => {
   const POST_DELETED = gql`
   subscription postDeleted($threadId: ID!){
       postDeleted(threadId: $threadId) {
@@ -48,9 +48,11 @@ const ThreadTemplate = ({ name, id }) => {
       document: POST_DELETED,
       variables: { threadId: id },
       updateQuery: (prev, { subscriptionData }) => {
+
         if (!subscriptionData.data) return prev
         const postId = subscriptionData.data.postDeleted._id
         const newPosts = prev.thread.posts.filter(a => a._id !== postId)
+        
         return Object.assign({}, prev, {
           ...prev,
           thread: {
@@ -63,13 +65,14 @@ const ThreadTemplate = ({ name, id }) => {
     })
 
     return () => unsubscribe()
-  }, [])
+  }, [threads.length])
 
   useEffect(() => {
     let unsubscribe = subscribeToMore({
       document: SUBSCRIBE_TO_POST,
       variables: { threadId: id },
       updateQuery: (prev, { subscriptionData }) => {
+        console.log(id)
         if (!subscriptionData.data) return prev
         const newPost = subscriptionData.data.postAdded
         return Object.assign({}, prev, {
@@ -85,12 +88,12 @@ const ThreadTemplate = ({ name, id }) => {
     })
 
     return () => unsubscribe()
-  }, [])
+  }, [threads.length])
 
 
   return (
-    <div className="threads thread-wrapper">
-      <div className="thread thread-scroll-wrap">
+    <div id={`${id}`} className="threads thread-wrapper">
+      <div  className="thread thread-scroll-wrap">
         <div className="threads thread-wrapper-top">
           <h3
             style={{
@@ -107,7 +110,7 @@ const ThreadTemplate = ({ name, id }) => {
             })}
           <PostAdder id={id} />
         </div>
-        <div className="threads thread-wrapper-bottom">To be added</div>
+        <ThreadBottom threadId={id} boardId = {boardId} nextIds = {nextIds}/>
       </div>
     </div>
   )

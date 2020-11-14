@@ -26,6 +26,8 @@ const PostAdder = ({ id }) => {
   const [createPost, { loading }] = useMutation(ADD_POST)
 
   const addPostHandler = () => {
+    setName('')
+    setIsAdding(false)
     createPost({
       variables: { name: name, threadId: id },
     })

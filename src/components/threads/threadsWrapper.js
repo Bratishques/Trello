@@ -3,10 +3,7 @@ import Thread from "./thread"
 import ThreadTemplate from "./threadTemplate"
 import "./threads.scss"
 
-const ThreadsWrapper = ({
-  threads,
-  boardId
-}) => {
+const ThreadsWrapper = ({ threads, boardId }) => {
   const sleep = ms => {
     return new Promise(resolve => {
       return setTimeout(resolve, ms)
@@ -42,21 +39,29 @@ const ThreadsWrapper = ({
       clearInterval(timer)
     }
   }
-
+  const getNextIds = (index, array) => {
+    return array.filter((a,i) => i > index)
+  }
 
   return (
-    <div
-      id="scrollContainer"
-      className="threads threads-wrapper"
-      onWheel={scrollHandler}
-    >
-      {threads.map((a, i) => {
-        return (
-          <ThreadTemplate key={i} name={a.name} posts={a.posts} id={a._id} />
-        )
-      })}
-      <div className="threads thread-wrapper">
-        <Thread boardId={boardId} />
+    <div id="scrollContainer" onWheel={scrollHandler}>
+      <div className="threads threads-wrapper">
+        {threads.map((a, i) => {
+          return (
+            <ThreadTemplate
+              key={i}
+              name={a.name}
+              posts={a.posts}
+              id={a._id}
+              boardId={boardId}
+              nextIds={getNextIds(i, threads)}
+              threads = {threads}
+            />
+          )
+        })}
+        <div className="threads thread-wrapper">
+          <Thread boardId={boardId} />
+        </div>
       </div>
     </div>
   )

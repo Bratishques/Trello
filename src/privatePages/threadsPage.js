@@ -10,6 +10,16 @@ const ThreadsPage = ({ id }) => {
   const auth = useContext(AuthContext)
   const [modalOpen, setModalOpen] = useState(false)
 
+
+
+  const THREAD_DELETED = gql`
+   subscription threadDeleted($boardId: ID!){
+     threadDeleted(boardId: $boardId) {
+       _id
+     }
+   }
+  `
+
   const SUBSCRIBE_TO_POST = gql`
     subscription onPostAdded($threadIds: [ID!]) {
       postAdded(threadIds: $threadIds) {
@@ -76,6 +86,34 @@ const ThreadsPage = ({ id }) => {
     //!important
     return () => unsubscribe()
   }, [SUBCRIBE_TO_THREADS, id, subscribeToMore])
+
+
+  useEffect(() => {
+    let unsub =  subscribeToMore({
+      document: THREAD_DELETED,
+      variables: {boardId: id},
+      updateQuery: (prev, {subscriptionData}) => {
+        try {
+        if (!subscriptionData.data) return prev
+        const deletedId = subscriptionData.data.threadDeleted._id
+        const newThreads = prev.board.threads.filter(a => a._id !== deletedId)
+
+        return Object.assign({}, prev, {
+          ...prev,
+          board: {
+            ...prev.board,
+            threads: [...newThreads]
+          }
+        })
+      }
+      catch (e) {
+        console.log(e)
+      }
+      }
+    })
+
+    return () => unsub()
+  },[])
 
   if (error) return <div>AN ERROR OCCURED</div>
 
