@@ -1,5 +1,4 @@
-import { ModalContextProvider } from "./src/context/modalContext";
-
+const { ModalContextProvider } = require("./src/context/modalContext");
 const { ApolloProvider } = require("@apollo/client");
 const React = require("react")
 const { client } = require("./src/apollo/client");

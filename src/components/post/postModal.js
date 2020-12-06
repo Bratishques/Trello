@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@apollo/client"
 import { gql } from "apollo-boost"
 import React, { useContext, useEffect, useState } from "react"
 import { ModalContext } from "../../context/modalContext"
+import PostComments from "./postComments"
 import PostDescription from "./postDescription"
 import PostTitle from "./postTitle"
 
@@ -21,9 +22,6 @@ const PostModal = () => {
      postUpdated(postId: $postId) {
       name
       description
-      comments {
-        text
-      }
       updateType
      }
    }
@@ -38,7 +36,7 @@ const PostModal = () => {
     }
   `
   
-  const { data, refetch, loading, subscribeToMore} = useQuery(FETCH_POST_DATA, {
+  const { data, refetch, subscribeToMore} = useQuery(FETCH_POST_DATA, {
     variables: { postId: postId },
   })
 
@@ -99,6 +97,8 @@ const PostModal = () => {
                 marginBottom: "20px"
             }}>Description</h4>
             <PostDescription description={data.post.description} postId = {postId} isOpen={isOpen}/>
+            <h4>Comments</h4>
+           <PostComments postId = {postId}/>
           </div>
         }
         </div>

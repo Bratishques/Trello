@@ -22,6 +22,8 @@
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-helmet": "^6.1.0",
+    "react-redux": "^7.2.2",
+    "redux": "^4.0.5",
     "simplebar-react": "^2.3.0",
     "subscriptions-transport-ws": "^0.9.18"
   },

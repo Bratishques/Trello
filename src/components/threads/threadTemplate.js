@@ -92,7 +92,7 @@ const ThreadTemplate = ({ name, id, boardId, nextIds, threads}) => {
 
 
   return (
-    <div id={`${id}`} className="threads thread-wrapper">
+    <div id={`${id}`} className="threads thread-wrapper" draggable="true">
       <div  className="thread thread-scroll-wrap">
         <div className="threads thread-wrapper-top">
           <h3
